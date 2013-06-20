@@ -304,10 +304,10 @@ var _3 = {
 			return string.slice(0, (string.length - 1));
 		};
 		this.IsNullOrEmpty = function (input){
-			if (input == null){
+			if (typeof input == 'undefined'){
 				return true;
 			}
-			else if(typeof input == 'undefined'){
+			else if(input == null){
 				return true;
 			}
 			else if(typeof input == 'string' && this.trimString(input) == ''){
@@ -326,6 +326,9 @@ var _3 = {
 		};
 		this.IsObject = function (input){
 			return (typeof input == 'object');
+		};
+		this.IsNumber = function (input){
+			return (typeof input == 'number');
 		};
 		this.execCallback = function (callback, paramaterObject){
 			if(!this.IsNullOrEmpty(paramaterObject)){
