@@ -232,15 +232,19 @@ var _3 = {
 		this.addHeadFiles = function(page){
 			if(this.helper.IsNullOrEmpty(page.files)){
 				var files = JSON.parse(page.files);
+				console.log(files);
 				var css = files.css;
 				var javascript = files.javascript;
+				console.log(css);
+				console.log(javascript);
 
-				for (var i = 0; i < css.length; i++) {
+				//for (var i = 0; i < css.length; i++) {
 					this.injector.registerStylesheet(css[i]);
-				};
-				for (var i = 0; i < javascript.length; i++) {
+				//}
+
+				//for (var i = 0; i < javascript.length; i++) {
 					this.injector.registerJavascript(javascript[i]);
-				};
+				//}
 
 				return true;
 			}
