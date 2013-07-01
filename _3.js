@@ -40,11 +40,10 @@
 /*
 My Notes:
 1- make sure all dataRepo management is being handled correctly
-2- need EXTENSIVE testing.
-3- after all the above is done, reimplement using prototypes(?)
-
-a- fix debug mode in error silo
-b- includes files not working
+2- file including ( css and javascript ) not working properly
+3- reimplement using prototypes
+4- refactor logging and errorsilo
+5- back to testing 
 */
 var _3 = {
 	Page : function(_source){
@@ -230,22 +229,16 @@ var _3 = {
 			return page;
 		};
 		this.addHeadFiles = function(page){
-			if(this.helper.IsNullOrEmpty(page.files)){
+			if(!this.helper.IsNullOrEmpty(page.files)){
 				var files = JSON.parse(page.files);
-				console.log(files);
 				var css = files.css;
 				var javascript = files.javascript;
-				console.log(css);
-				console.log(javascript);
-
-				//for (var i = 0; i < css.length; i++) {
-					this.injector.registerStylesheet(css[i]);
-				//}
-
-				//for (var i = 0; i < javascript.length; i++) {
-					this.injector.registerJavascript(javascript[i]);
-				//}
-
+				if(!this.helper.isStyleIncluded(css)){
+					this.injector.registerStylesheet(css);
+				}
+				if(!this.helper.isScriptIncluded(javascript)){
+					this.injector.registerJavascript(javascript);
+				}
 				return true;
 			}
 			else{
@@ -288,6 +281,24 @@ var _3 = {
 		return this;
 	},
 	Helper : function(){
+		this.isScriptIncluded = function (scriptURL){
+			var allScripts = document.getElementsByTagName('script');
+			for (var i = 0; i < allScripts.length; i++) {
+				if(allScripts[i].src == scriptURL){
+					return true;
+				}
+			}
+			return false;
+		};
+		this.isStyleIncluded = function (styleURL){
+			var allStyles = document.getElementsByTagName('link');
+			for (var i = 0; i < allStyles.length; i++) {
+				if(allStyles[i].href == styleURL){
+					return true;
+				}
+			}
+			return false;
+		};
 		this.el = function (id){
 			return document.getElementById(id);
 		};
@@ -343,7 +354,7 @@ var _3 = {
 					return eval(callback + '(' + paramaterObject + ')');
 				}
 			}
-			_3.ErrorSilo.addError({errorMessage : 'Invalid callback or parameter object.', timestamp : new Date().getTime()}, false);
+			//_3.ErrorSilo.addError({errorMessage : 'Invalid callback or parameter object.', timestamp : new Date().getTime()}, false);
 			return null;
 		};
 		return this;
