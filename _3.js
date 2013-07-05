@@ -15,7 +15,7 @@
 	AUTHOR:
 	-------
 	Jad A. Jabbour
-	Pink Floyd, Daft Punk, Tolkein, H. Miller, AC. Doyle, code & alcohol. Charly passes by a lot; 
+	Pink Floyd, Daft Punk, Tolkien, H. Miller, AC. Doyle, code & alcohol. Charly passes by a lot; 
 	It's alright though. Rainbow writer/Code ninja.  ·  Beirut, Lebanon.
 
 	Blog: medium.com/@JadChronicles
@@ -39,29 +39,29 @@
 *********************************************************************************/
 /*
 My Notes:
-1- make sure all dataRepo management is being handled correctly
-2- file including ( css and javascript ) not working properly
-3- reimplement using prototypes
-4- refactor logging and errorsilo
+1- file including ( css and javascript ) not working properly
+2- reimplement using prototypes
+3- refactor logging and errorsilo
+4- "Parser.serializeObject" might be useless.
 5- back to testing 
 */
 var _3 = {
 	Page : function(_source){
 		this.source = ''; 
+		this.container = ''; 
+		this.dataRepo = '';
 		this.html = ''; 
 		this.javascript = ''; 
 		this.json = ''; 
-		this.container = ''; 
 		this.controls = []; 
 		this.files = '';
-		this.dataRepo = '';
 		this.helper = new _3.Helper();
 		this.reqHandle = new _3.RequestLoader();
 		this.parser = new _3.Parser();
 		this.injector = new _3.Inject();
 		this.configurePage = function (_source){
-			this.source = this.helper.IsNullOrEmpty(_source.source) ? '' : _source.source;
-			this.container = this.helper.IsNullOrEmpty(_source.container) ? '' : _source.container;
+			this.source = this.helper.IsNullOrEmpty(_source.source) ? this.log('obstructive_error', 'SOURCE not specified') : _source.source;
+			this.container = this.helper.IsNullOrEmpty(_source.container) ? this.log('obstructive_error', 'CONTAINER not specified') : _source.container;
 			this.dataRepo =  this.helper.IsNullOrEmpty(_source.dataRepo) ? this.createDateRepo() : _source.dataRepo;
 			return this;
 		};
@@ -183,6 +183,11 @@ var _3 = {
 			document.getElementsByTagName('body')[0].appendChild(element);
 			return element.id;
 		};
+		this.log = function (logType, message){
+			var timesigned = logType + "_" + new Date().getTime();
+			//use new log class here
+			return timesigned;
+		}
 		this.configurePage(_source);
 		return this;
 	},
