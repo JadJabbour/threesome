@@ -1,6 +1,6 @@
 /**********************************************************************************
-	threesomeJS ( _3 ):
-	-----------------------
+threesomeJS ( _3 ):
+-----------------------
 	_3 (threesomeJS) is for experimental purposes. Using it, one can build web-apps 
 	with un-conventional/experimental architectures. The source is not minified in
 	order to allow anyone at any point to manipulate the way it behaves; And do
@@ -11,9 +11,9 @@
 
 	Peer review is more than welcome, your thoughts and ideas about this
 	(as harsh as they are) are very important to me.
-	
-	AUTHOR:
-	-------
+
+AUTHOR:
+-------
 	Jad A. Jabbour
 	Pink Floyd, Daft Punk, Tolkien, H. Miller, AC. Doyle, code & alcohol. Charly passes by a lot; 
 	It's alright though. Rainbow writer/Code ninja.  ·  Beirut, Lebanon.
@@ -22,8 +22,8 @@
 	GitHub: /JadJabbour
 	Twitter: @JadChronicles
 
-	GNU/GPL LICENSE: 
-	----------------
+GNU/GPL LICENSE: 
+----------------
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
@@ -41,8 +41,7 @@
 /*
 Notes:
 1- file including ( css and javascript ) not working properly
-2- refactor logging and errorsilo
-3- post feature tuning
+2- post feature tuning
 */
 
 //_3 namespace//
@@ -205,7 +204,7 @@ _3.Page.prototype.post = function (postData, responseFormat, IsInPostResponseRep
 		this.reqHandle.post(this, 'post', data, null, null, callback);
 	}
 	else{
-		//error log here
+		_3.LogSilo.addLog({mode: 'error', message : 'Object is empty.', timestamp : new Date().getTime()}, false);
 	}
 	return this;
 };
@@ -339,7 +338,7 @@ _3.Parser.prototype.addHeadFiles = function(page){
 		return true;
 	}
 	else{
-		_3.ErrorSilo.addError({errorMessage : 'FILES object is empty.', timestamp : new Date().getTime()}, false);
+		_3.LogSilo.addLog({mode : 'error', message : 'FILES object is empty.', timestamp : new Date().getTime()}, false);
 		return false;
 	}
 }
@@ -608,7 +607,7 @@ _3.RequestLoader.prototype.get = function (page, aspect, callback, parameters, o
 		return callUrl.host == currUrl.host ? new _3.XHR().get(page, callUrl.fullURL, callback, parameters, aspect, onHandle) : new _3.XDR().get(page, callUrl.fullURL, callback, parameters, aspect, onHandle);
 	}
 	else{
-		_3.ErrorSilo.addError({errorMessage : 'Current URL is not set.', timestamp : new Date().getTime()}, false);
+		_3.LogSilo.addLog({mode: 'error', message : 'Current URL is not set.', timestamp : new Date().getTime()}, false);
 		return null;
 	}
 };
@@ -628,7 +627,7 @@ _3.RequestLoader.prototype.post = function (page, aspect, postData, callback, pa
 		return callUrl.host == currUrl.host ? new _3.XHR().post(page, callUrl.fullURL, postData, callback, parameters, aspect, onHandle) : new _3.XDR().post(page, callUrl.fullURL, postData, callback, parameters, aspect, onHandle);
 	}
 	else{
-		_3.ErrorSilo.addError({errorMessage : 'Current URL is not set.', timestamp : new Date().getTime()}, false);
+		_3.LogSilo.addLog({mode : 'error', message : 'Current URL is not set.', timestamp : new Date().getTime()}, false);
 		return null;
 	}
 };
@@ -777,7 +776,7 @@ _3.HandleXHR = function (page, requestObject, loadIn, callback){
 			this.helper.execCallback(callback, requestObject);
     	}
     	else{
-			_3.ErrorSilo.addError({errorMessage : 'HTTP request failed :: ' + requestObject.statusText, timestamp : new Date().getTime()}, false);
+			_3.LogSilo.addLog({mode : 'error', message : 'HTTP request failed :: ' + requestObject.statusText, timestamp : new Date().getTime()}, false);
 		}
 	}
 };
@@ -797,7 +796,7 @@ _3.HandleXDR = function (page, requestObject, loadIn, callback){
 			this.helper.execCallback(callback, requestObject);
     	}
     	else{
-			_3.ErrorSilo.addError({errorMessage : 'x-HTTP request failed :: ' + requestObject.statusText, timestamp : new Date().getTime()}, false);
+			_3.LogSilo.addLog({mode : 'error', message : 'x-HTTP request failed :: ' + requestObject.statusText, timestamp : new Date().getTime()}, false);
 		}
 	}
 };
@@ -851,39 +850,37 @@ _3.urlObject = function(_url){
 //////////////////////////////
 /*Namespace global functions*/
 
-//Namespace global logging & error handling//
-/////////////////////////////////////////////
+//Namespace global logging & log silo//
+///////////////////////////////////////
 
-//this is temporary, later on we will add a module for 
-//logging seperate from the error module.
-_3.ErrorSilo = {
-	errorsCount : 0,
-	errors : [],
+_3.LogSilo = {
+	logCount : 0,
+	log : [],
 	debugMode : false,
-	addError : function (errorObject, notify){
+	addLog : function (object, notify){
 		helper = new _3.Helper();
 		notifier = new _3.Notifier();
-		if(!helper.IsNullOrEmpty(errorObject) && helper.trimString(errorObject) != ''){
-			this.errors.push(errorObject);
-			this.errorsCount++;
+		if(!helper.IsNullOrEmpty(object)){
+			this.log.push(errorObject);
+			this.logCount++;
 		}
 		if(notify || this.debugMode){
-			notifier.notify('error', errorObject.errorMessage);
+			notifier.notify('error', object.message);
 		}
 	},
-	clearErrors : function(){
-		this.errors.length = 0;
-		this.errorsCount = 0;
+	clearLog : function(){
+		this.log.length = 0;
+		this.logCount = 0;
 	},
-	printAllErrors : function (printCallback){
+	printLog : function (printCallback){
 		helper = new _3.Helper();
 		if(!helper.IsNullOrEmpty(printCallback)){
-			for (var i = this.errors.length - 1; i >= 0; i--){
-				helper.execCallback(printCallback, this.errors[i]);
+			for (var i = this.log.length - 1; i >= 0; i--){
+				helper.execCallback(printCallback, this.log[i]);
 			}
 		}
 		else{
-			this.addError({errorMessage : 'Supplied print callback function is not valid.', timestamp : new Date().getTime()}, false);
+			this.addLog({mode: 'error', message : 'Supplied print callback function is not valid.', timestamp : new Date().getTime()}, false);
 		}
 	},
 	toggleDebug : function (state){
@@ -896,5 +893,5 @@ _3.ErrorSilo = {
 		}
 	}
 };
-/////////////////////////////////////////////
-/*Namespace global logging & error handling*/
+///////////////////////////////////////
+/*Namespace global logging & log silo*/
