@@ -58,8 +58,8 @@ var _3 = { };
 //params: _source (JSON object)
 //return: _3.Page
 _3.Page.prototype.configurePage = function(_source) {
-	this.source = this.helper.IsNullOrEmpty(_source.source) ? this.log('obstructive_error', 'SOURCE not specified') : _source.source;
-	this.container = this.helper.IsNullOrEmpty(_source.container) ? this.log('obstructive_error', 'CONTAINER not specified') : _source.container;
+	this.source = this.helper.IsNullOrEmpty(_source.source) ? this.log('error', 'SOURCE not specified') : _source.source;
+	this.container = this.helper.IsNullOrEmpty(_source.container) ? this.log('error', 'CONTAINER not specified') : _source.container;
 	this.dataRepo =  this.helper.IsNullOrEmpty(_source.dataRepo) ? this.createDateRepo() : _source.dataRepo;
 	return this;
 };
@@ -204,7 +204,7 @@ _3.Page.prototype.post = function (postData, responseFormat, IsInPostResponseRep
 		this.reqHandle.post(this, 'post', data, null, null, callback);
 	}
 	else{
-		_3.LogSilo.addLog({mode: 'error', message : 'Object is empty.', timestamp : new Date().getTime()}, false);
+		this.log('error', 'Object is empty.');
 	}
 	return this;
 };
@@ -238,8 +238,8 @@ _3.Page.prototype.createDateRepo = function (){
 //params: logType (['warning' | 'error' | 'inform'])
 //return: name of the object (signed with timestamp) of the newly added log event
 _3.Page.prototype.log = function (logType, message){
-	var timesigned = logType + "_" + new Date().getTime();
-	//use new log class here
+	var timesigned = new Date().getTime();
+	_3.LogSilo.addLog({ mode : logType, message : message, timestamp : timesigned}, false);
 	return timesigned;
 };
 
@@ -338,8 +338,8 @@ _3.Parser.prototype.addHeadFiles = function(page){
 		return true;
 	}
 	else{
-		_3.LogSilo.addLog({mode : 'error', message : 'FILES object is empty.', timestamp : new Date().getTime()}, false);
-		return false;
+    	page.log('error', 'Page.files object is empty.');
+    	return false;
 	}
 }
 
@@ -359,7 +359,7 @@ _3.Parser = function(){
 //params: page (page object)
 //params: data (object to be pushed to repo)
 _3.Inject.prototype.pushToRepo = function (page, data){
-	page.addToDataRepo(data);
+	return page.addToDataRepo(data);
 };
 
 //method: data (injects the data into _3.Page.data and then pops to screen) 
@@ -607,8 +607,8 @@ _3.RequestLoader.prototype.get = function (page, aspect, callback, parameters, o
 		return callUrl.host == currUrl.host ? new _3.XHR().get(page, callUrl.fullURL, callback, parameters, aspect, onHandle) : new _3.XDR().get(page, callUrl.fullURL, callback, parameters, aspect, onHandle);
 	}
 	else{
-		_3.LogSilo.addLog({mode: 'error', message : 'Current URL is not set.', timestamp : new Date().getTime()}, false);
-		return null;
+    	page.log('error', 'Current URL is not set.');
+    	return null;
 	}
 };
 
@@ -627,8 +627,8 @@ _3.RequestLoader.prototype.post = function (page, aspect, postData, callback, pa
 		return callUrl.host == currUrl.host ? new _3.XHR().post(page, callUrl.fullURL, postData, callback, parameters, aspect, onHandle) : new _3.XDR().post(page, callUrl.fullURL, postData, callback, parameters, aspect, onHandle);
 	}
 	else{
-		_3.LogSilo.addLog({mode : 'error', message : 'Current URL is not set.', timestamp : new Date().getTime()}, false);
-		return null;
+    	page.log('error', 'Current URL is not set.');
+    	return null;
 	}
 };
 
@@ -776,8 +776,8 @@ _3.HandleXHR = function (page, requestObject, loadIn, callback){
 			this.helper.execCallback(callback, requestObject);
     	}
     	else{
-			_3.LogSilo.addLog({mode : 'error', message : 'HTTP request failed :: ' + requestObject.statusText, timestamp : new Date().getTime()}, false);
-		}
+    		page.log('error', 'HTTP request failed :: ' + requestObject.statusText);
+    	}
 	}
 };
 
@@ -796,7 +796,7 @@ _3.HandleXDR = function (page, requestObject, loadIn, callback){
 			this.helper.execCallback(callback, requestObject);
     	}
     	else{
-			_3.LogSilo.addLog({mode : 'error', message : 'x-HTTP request failed :: ' + requestObject.statusText, timestamp : new Date().getTime()}, false);
+    		page.log('error', 'x-HTTP request failed :: ' + requestObject.statusText);
 		}
 	}
 };
