@@ -40,13 +40,31 @@ GNU/GPL LICENSE:
 
 //_3 namespace//
 ////////////////
-
 var _3 = { };
 ////////////////
 /*_3 namespace*/
 
 //Page object constructor & prototype//
 ///////////////////////////////////////
+//_3.Page object constructor
+_3.Page = function (_source) {
+		this.source = ''; 
+		this.container = ''; 
+		this.dataRepo = '';
+		this.html = ''; 
+		this.javascript = ''; 
+		this.json = ''; 
+		this.controls = []; 
+		this.files = '';
+		this.postTick = null;
+		this.pullTick = null;
+		this.helper = new _3.Helper();
+		this.reqHandle = new _3.RequestLoader();
+		this.parser = new _3.Parser();
+		this.injector = new _3.Inject();
+		this.configurePage(_source);
+		return this;
+};
 
 //method: configurePage (configures PAGE object)
 //params: _source (JSON object)
@@ -259,31 +277,17 @@ _3.Page.prototype.pullTicker = function (callInterval){
 	this.pullTick = setTimeout(this.update(), callInterval);
 	return this;
 };
-
-//_3.Page object constructor
-_3.Page = function (_source) {
-		this.source = ''; 
-		this.container = ''; 
-		this.dataRepo = '';
-		this.html = ''; 
-		this.javascript = ''; 
-		this.json = ''; 
-		this.controls = []; 
-		this.files = '';
-		this.postTick = null;
-		this.pullTick = null;
-		this.helper = new _3.Helper();
-		this.reqHandle = new _3.RequestLoader();
-		this.parser = new _3.Parser();
-		this.injector = new _3.Inject();
-		this.configurePage(_source);
-		return this;
-};
 ///////////////////////////////////////
 /*Page object constructor & prototype*/
 
 //Parser object constructor & prototype//
 /////////////////////////////////////////
+//_3.Parser object constructor
+_3.Parser = function(){
+	this.helper = new _3.Helper();
+	this.injector = new _3.Inject();
+	return this;
+};
 
 //method: serializeObject (URL serializes a json object) 
 //params: object (json object to be serialized)
@@ -361,18 +365,15 @@ _3.Parser.prototype.addHeadFiles = function(page){
     	return false;
 	}
 }
-
-//_3.Parser object constructor
-_3.Parser = function(){
-	this.helper = new _3.Helper();
-	this.injector = new _3.Inject();
-	return this;
-};
 /////////////////////////////////////////
 /*Parser object constructor & prototype*/
 
 //Inject object constructor & prototype//
 /////////////////////////////////////////
+//_3.Inject object constructor
+_3.Inject = function(){
+	return this;
+};
 
 //method: pushToRepo (pushes data to _3.Page's repo) 
 //params: page (page object)
@@ -421,16 +422,15 @@ _3.Inject.prototype.registerJavascript = function (jsUrl){
 	script.setAttribute("src", jsUrl);
 	head.appendChild(script);
 };
-
-//_3.Inject object constructor
-_3.Inject = function(){
-	return this;
-};
 /////////////////////////////////////////
 /*Inject object constructor & prototype*/
 
 //Helper object constructor & prototype//
 /////////////////////////////////////////
+//_3.Helper object constructor
+_3.Helper = function(){
+	return this;
+};
 
 //method: isScriptIncluded (checks if a certain javascript file is already included) 
 //params: scriptURL (the file to look for)
@@ -555,21 +555,21 @@ _3.Helper.prototype.execCallback = function (callback, paramaterObject){
 	}
 	return null;
 };
-
-//_3.Helper object constructor
-_3.Helper = function(){
-	return this;
-};
 /////////////////////////////////////////
 /*Helper object constructor & prototype*/
 
 //Notifier object constructor & prototype//
 ///////////////////////////////////////////
+//_3.Notifier object constructor
+_3.Notifier = function(){
+	this.notifyCallback = '';
+	return this;
+};
 
 //method: notify (launches the notifier with a specific message and mode) 
 //params: mode (['error' | 'warning' | 'inform'])
 //params: message (the message to be included in the notification)
-_3.Helper.prototype.notify = function (mode, message){
+_3.Notifier.prototype.notify = function (mode, message){
 	switch(mode){
 		case 'error':
 			this.err(message);
@@ -585,32 +585,32 @@ _3.Helper.prototype.notify = function (mode, message){
 
 //method: err (launches the notifier with a specific message in error mode) 
 //params: message (the message to be included in the notification)
-_3.Helper.prototype.err = function (message){
+_3.Notifier.prototype.err = function (message){
 	alert('error : ' + message);
 };
 
 //method: err (launches the notifier with a specific message in warning mode) 
 //params: message (the message to be included in the notification)
-_3.Helper.prototype.warn = function (message){
+_3.Notifier.prototype.warn = function (message){
 	alert('warning : ' + message);
 };
 
 //method: inform (launches the notifier with a specific message in mode inform mode) 
 //params: message (the message to be included in the notification)
-_3.Helper.prototype.inform = function (message){
+_3.Notifier.prototype.inform = function (message){
 	alert(message);
-};
-
-//_3.Notifier object constructor
-_3.Notifier = function(){
-	this.notifyCallback = '';
-	return this;
 };
 ///////////////////////////////////////////
 /*Notifier object constructor & prototype*/
 
 //RequestLoader object constructor & prototype//
 ////////////////////////////////////////////////
+//_3.RequestLoader object constructor
+_3.RequestLoader = function(){
+	this.helper = new _3.Helper();
+	this.parser = new _3.Parser();
+	return this;
+};
 
 //method: get (executes a get request against the API) 
 //params: page (the page object making the request)
@@ -663,18 +663,17 @@ _3.RequestLoader.prototype.buildPostData = function (page, data, responseFormat)
 		page : page.serializePage()
 	}).replace(new RegExp('%20', 'g'), '+');
 };
-
-//_3.RequestLoader object constructor
-_3.RequestLoader = function(){
-	this.helper = new _3.Helper();
-	this.parser = new _3.Parser();
-	return this;
-};
 ////////////////////////////////////////////////
 /*RequestLoader object constructor & prototype*/
 
 //XHR object constructor & prototype//
 //////////////////////////////////////
+//_3.XHR object constructor
+_3.XHR = function(){
+	this.helper = new _3.Helper();
+	this.xhr = null;
+	return this;
+};
 
 //method: get (executes get requests against a same-domain API) 
 //params: page (the page object making the request) 
@@ -715,18 +714,17 @@ _3.XHR.prototype.post = function (page, _url, postData, callback, parameters, lo
 	this.xhr.send(postData);
 	return this;
 };
-
-//_3.XHR object constructor
-_3.XHR = function(){
-	this.helper = new _3.Helper();
-	this.xhr = null;
-	return this;
-};
 //////////////////////////////////////
 /*XHR object constructor & prototype*/
 
 //XDR object constructor & prototype//
 //////////////////////////////////////
+//_3.XDR object constructor
+_3.XDR = function(){
+	this.helper = new _3.Helper();
+	this.xdr = null;
+	return this;
+};
 
 //method: get (executes get requests against a different-domain API) 
 //params: page (the page object making the request) 
@@ -767,19 +765,11 @@ this.post = function (page, _url, postData, callback, parameters, loadIn, onHand
 	this.xdr.send(postData);
 	return this;
 };
-
-//_3.XDR object constructor
-_3.XDR = function(){
-	this.helper = new _3.Helper();
-	this.xdr = null;
-	return this;
-};
 //////////////////////////////////////
 /*XDR object constructor & prototype*/
 
 //Namespace global functions//
 //////////////////////////////
-
 //method: HandleXHR (handles an XHR response) 
 //params: page (the page object making the request)
 //params: requestObject (XHR object)
@@ -871,7 +861,6 @@ _3.urlObject = function(_url){
 
 //Namespace global logging & log silo//
 ///////////////////////////////////////
-
 _3.LogSilo = {
 	logCount : 0,
 	log : [],
