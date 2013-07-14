@@ -38,12 +38,6 @@ GNU/GPL LICENSE:
 	along with this program.  If not, see <http://www.gnu.org/licenses/gpl.html>.
 *********************************************************************************/
 
-/*
-Notes:
-1- file including ( css and javascript ) not working properly
-2- post feature tuning
-*/
-
 //_3 namespace//
 ////////////////
 
@@ -179,26 +173,31 @@ _3.Page.prototype.pop = function (){
 //params: postData (data that is being sent to the server)
 //params: responseFormat (expected response format['json' | 'javascript'])
 //params: IsInPostResponseRepo (bool that flags whether the response should be stored or parsed)
+//params: postCallback (call back function to launch after the post response is handled)
 //return: _3.Page
-_3.Page.prototype.post = function (postData, responseFormat, IsInPostResponseRepo){
+_3.Page.prototype.post = function (postData, responseFormat, IsInPostResponseRepo, postCallback){
 	var data = this.reqHandle.buildPostData(this, postData, responseFormat);
 	var callback = null;
+	var dataID = null;
 	if(!this.helper.IsNullOrEmpty(data)){
 		if(responseFormat == 'json'){
 			if(IsInPostResponseRepo){
 				callback = function (_parameters){
-					_parameters.page.injector.pushToRepo(this, _parameters.response.responseText);
+					dataID = _parameters.page.injector.pushToRepo(this, _parameters.response.responseText);
+					_parameters.page.helper.execCallback(postCallback, dataID);
 				}
 			}
 			else{
 				callback = function (_parameters){
 					_parameters.page.injector.data(this, _parameters.response.responseText);
+					_parameters.page.helper.execCallback(postCallback, dataID);
 				}
 			}
 		}
 		if(responseFormat == 'javascript'){
 			callback = function (_parameters){
 				_parameters.page.injector.script(_parameters.response.responseText);
+				_parameters.page.helper.execCallback(postCallback, dataID);
 			}
 		}
 		this.reqHandle.post(this, 'post', data, null, null, callback);
@@ -220,7 +219,7 @@ _3.Page.prototype.getDataRepo = function(){
 //return: name of the object (signed with timestamp) of the newly added json
 _3.Page.prototype.addToDataRepo = function (data){
 	var timesign = "data_" + new Date().getTime().toString();
-	this.helper.el(this.dataRepo).innerText += "," + timesign + "={" + JSON.stringify(data) + "}";
+	this.helper.el(this.dataRepo).innerText += timesign + "={" + JSON.stringify(data) + "};";
 	return timesign;
 };
 
@@ -243,6 +242,24 @@ _3.Page.prototype.log = function (logType, message){
 	return timesigned;
 };
 
+//method: postTicker (sets the post ticker interval) 
+//params: callInterval (interval to wait between calls) 
+//params: postData (data that is being sent to the server)
+//params: responseFormat (expected response format['json' | 'javascript'])
+//params: IsInPostResponseRepo (bool that flags whether the response should be stored or parsed)
+//params: postCallback (call back function to launch after the post response is handled)
+_3.Page.prototype.postTicker = function (callInterval, postData, responseFormat, IsInPostResponseRepo, postCallback){
+	this.postTick = setTimeout(this.post(postData, responseFormat, IsInPostResponseRepo, postCallback), callInterval);
+	return this;
+};
+
+//method: pullTicker (sets the pull -update- ticker interval) 
+//params: callInterval (interval to wait between calls) 
+_3.Page.prototype.pullTicker = function (callInterval){
+	this.pullTick = setTimeout(this.update(), callInterval);
+	return this;
+};
+
 //_3.Page object constructor
 _3.Page = function (_source) {
 		this.source = ''; 
@@ -253,6 +270,8 @@ _3.Page = function (_source) {
 		this.json = ''; 
 		this.controls = []; 
 		this.files = '';
+		this.postTick = null;
+		this.pullTick = null;
 		this.helper = new _3.Helper();
 		this.reqHandle = new _3.RequestLoader();
 		this.parser = new _3.Parser();
