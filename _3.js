@@ -236,8 +236,8 @@ _3.Page.prototype.getDataRepo = function(){
 //params: data (data that is to be stored)
 //return: name of the object (signed with timestamp) of the newly added json
 _3.Page.prototype.addToDataRepo = function (data){
-	var timesign = "data_" + new Date().getTime().toString();
-	this.helper.el(this.dataRepo).innerText += timesign + "={" + JSON.stringify(data) + "};";
+	var timesign = 'data_' + new Date().getTime().toString();
+	this.helper.el(this.dataRepo).innerText += timesign + '={' + JSON.stringify(data) + '};';
 	return timesign;
 };
 
@@ -246,7 +246,7 @@ _3.Page.prototype.addToDataRepo = function (data){
 _3.Page.prototype.createDateRepo = function (){
 	var element = document.createElement('input');
 	element.type = 'hidden';
-	element.id = this.container + "_dr_" + new Date().getTime().toString();
+	element.id = this.container + '_dr_' + new Date().getTime().toString();
 	document.getElementsByTagName('body')[0].appendChild(element);
 	return element.id;
 };
@@ -406,10 +406,10 @@ _3.Inject.prototype.script = function (script){
 //params: cssUrl (url of css file)
 _3.Inject.prototype.registerStylesheet = function (cssUrl){
 	var link = document.createElement('link');
-	var head = document.getElementsByTagName("head")[0];
-	link.setAttribute("rel", "stylesheet");
-	link.setAttribute("type", "text/css");
-	link.setAttribute("href", cssUrl);
+	var head = document.getElementsByTagName('head')[0];
+	link.setAttribute('rel', 'stylesheet');
+	link.setAttribute('type', 'text/css');
+	link.setAttribute('href', cssUrl);
 	head.appendChild(link);
 };
 
@@ -417,9 +417,9 @@ _3.Inject.prototype.registerStylesheet = function (cssUrl){
 //params: cssUrl (url of css file)
 _3.Inject.prototype.registerJavascript = function (jsUrl){
 	var script = document.createElement('script');
-	var head = document.getElementsByTagName("head")[0];
-	script.setAttribute("type","text/javascript");
-	script.setAttribute("src", jsUrl);
+	var head = document.getElementsByTagName('head')[0];
+	script.setAttribute('type','text/javascript');
+	script.setAttribute('src', jsUrl);
 	head.appendChild(script);
 };
 /////////////////////////////////////////
@@ -710,7 +710,7 @@ _3.XHR.prototype.post = function (page, _url, postData, callback, parameters, lo
 		new _3.Helper().execCallback(callback, { 'page' : page, 'parameters' : parameters});
 	};
 	this.xhr.open('POST', _url, true);
-	this.xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	this.xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	this.xhr.send(postData);
 	return this;
 };
@@ -761,7 +761,7 @@ this.post = function (page, _url, postData, callback, parameters, loadIn, onHand
 		new _3.Helper().execCallback(callback, { 'page' : page, 'parameters' : parameters});
 	};
 	this.xdr.open('POST', _url, true);
-	this.xdr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	this.xdr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 	this.xdr.send(postData);
 	return this;
 };
