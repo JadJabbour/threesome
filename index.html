@@ -17,10 +17,18 @@
 				source : '/_3/primary'
 			}).load(true, true);
 
+			var nav1 =  new _3.Navigator(section1, function(page){ 
+				console.log("navigated section 1 to: " + page.source); 
+			});
+
 			var section2 = new _3.Page({
 				container : 'secondary_section',
 				source : '/_3/secondary'
 			}).load(true, true);
+
+			var nav2 =  new _3.Navigator(section2, function(page){ 
+				console.log("navigated section 2 to: " + page.source); 
+			});
 		</script>
 	</body>
 </html>

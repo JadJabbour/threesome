@@ -58,6 +58,7 @@ _3.Page = function (_source) {
 		this.files = '';
 		this.postTick = null;
 		this.pullTick = null;
+		this.onPop = function(){ return true; };
 		this.helper = new _3.Helper();
 		this.reqHandle = new _3.RequestLoader();
 		this.parser = new _3.Parser();
@@ -183,6 +184,7 @@ _3.Page.prototype.pop = function (){
 		this.helper.el(this.container).innerHTML = this.parser.bindDataToScreen(this);
 		this.parser.addHeadFiles(this);	
 		this.parser.bindScript(this);
+		this.helper.execCallback(this.onPop, this);
 	}
 	return this;
 };
@@ -479,7 +481,7 @@ _3.Helper.prototype.trimString = function (string){
 	    }
 	    return string;
 	}
-	return ' ';
+	return '';
 };
 
 //method: removeLastChar (removes the last char of a string) 
@@ -734,7 +736,7 @@ _3.XDR = function(){
 //params: loadIn (where/how the response should be loaded)
 //params: onHandle (function to be called when the response is handled)
 //return: response object
-this.get = function (page, _url, callback, parameters, loadIn, onHandle){
+_3.XDR.prototype.get = function (page, _url, callback, parameters, loadIn, onHandle){
 	this.xdr = new XDomainRequest();
 	this.xdr.onreadystatechange = function(){
 		_3.HandleXDR(page, this, loadIn, onHandle);
@@ -754,7 +756,7 @@ this.get = function (page, _url, callback, parameters, loadIn, onHandle){
 //params: loadIn (where/how the response should be loaded)
 //params: onHandle (function to be called when the response is handled)
 //return: response object
-this.post = function (page, _url, postData, callback, parameters, loadIn, onHandle){
+_3.XDR.prototype.post = function (page, _url, postData, callback, parameters, loadIn, onHandle){
 	this.xdr = new XDomainRequest();
 	this.xdr.onreadystatechange = function(){
 		_3.HandleXDR(page, this, loadIn, onHandle);
@@ -767,6 +769,34 @@ this.post = function (page, _url, postData, callback, parameters, loadIn, onHand
 };
 //////////////////////////////////////
 /*XDR object constructor & prototype*/
+
+//Navigator object constructor & prototype//
+////////////////////////////////////////////
+//_3.Navigator object constructor
+_3.Navigator = function(pageObj, callback){
+	this.page = pageObj;
+	this.page.onPop = callback;
+	this.previousState = [];
+	return this;
+};
+
+//method: Navigate
+//params: source (page object source link[API])
+//params: callback function to call after the update completes 
+_3.Navigator.prototype.navigate = function (source){
+	this.previousState.push(this.page.source);
+	this.page.source = source;
+	this.page.update();
+};
+
+//method: back (navigates one state back)
+_3.Navigator.prototype.back = function (){
+	this.previousState.push(this.page.source);
+	this.page.source = this.previousState[this.previousState.length - 2];
+	this.page.update();
+};
+////////////////////////////////////////////
+/*Navigator object constructor & prototype*/
 
 //Namespace global functions//
 //////////////////////////////
@@ -815,7 +845,7 @@ _3.HandleXDR = function (page, requestObject, loadIn, callback){
 //return: URL object
 _3.urlObject = function(_url){
 	this.helper = new _3.Helper();
-	var a,key,value,pair,params,variables;
+	var a, key, value, pair, params, variables;
 	a = document.createElement('a');
 	a.href = this.helper.IsNullOrEmpty(_url) ? window.location.href : _url;
 	url_query = a.search.substring(1);
