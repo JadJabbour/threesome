@@ -85,7 +85,7 @@ _3.Page.prototype.loadFiles = function (doInject){
 		if(_parameters.withpop){
 			_parameters.page.pop();
 		}
-	}, doInject, null);
+	}, this.helper.IsBoolean(doInject) ? doInject : true, null);
 	return this;
 };
 
@@ -99,10 +99,10 @@ _3.Page.prototype.loadFront = function(reload_flag, with_pop) {
 			if(_parameters.withpop){
 				_parameters.page.pop();
 			}
-		}, with_pop, null);
+		}, this.helper.IsBoolean(with_pop) ? with_pop : true, null);
 	}
 	else{
-		if(with_pop){
+		if(this.helper.IsBoolean(with_pop) && with_pop){
 			this.pop();
 		}
 	}
@@ -119,10 +119,10 @@ _3.Page.prototype.loadData = function (reload_flag, with_pop){
 			if(_parameters.withpop){
 				_parameters.page.pop();
 			}
-		}, with_pop, null);
+		}, this.helper.IsBoolean(with_pop) ? with_pop : true, null);
 	}
 	else{
-		if(with_pop){
+		if(this.helper.IsBoolean(with_pop) && with_pop){
 			this.pop();
 		}
 	}
@@ -139,10 +139,10 @@ _3.Page.prototype.loadFunctionality = function (reload_flag, with_pop){
 			if(_parameters.withpop){
 				_parameters.page.pop();
 			}
-		}, with_pop, null);
+		}, this.helper.IsBoolean(with_pop) ? with_pop : true, null);
 	}
 	else{
-		if(with_pop){
+		if(this.helper.IsBoolean(with_pop) && with_pop){
 			this.pop();
 		}
 	}
