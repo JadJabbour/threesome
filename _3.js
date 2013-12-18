@@ -228,10 +228,17 @@ _3.Page.prototype.post = function (postData, responseFormat, IsInPostResponseRep
 	return this;
 };
 
-//method: getDataRepo (gets the responses stored in the dataRepo of _3.Page object) 
+//method: getDataFromRepo (gets the responses stored in the dataRepo of _3.Page object) 
 //return: stored data as JSON
-_3.Page.prototype.getDataRepo = function(){
-	return JSON.parse(this.helper.el(this.dataRepo).innerText);
+_3.Page.prototype.getDataFromRepo = function(){
+	return JSON.parse('{' + this.helper.el(this.dataRepo).value + '}');
+};
+
+//method: getDataFromRepoById (gets the responses stored in the dataRepo of _3.Page object by ID) 
+//return: stored data as JSON
+_3.Page.prototype.getDataFromRepoById = function(_id){
+	var jsonObj = this.getDataFromRepo();
+	return eval('jsonObj.' + _id);
 };
 
 //method: addToDataRepo (stores data in the dataRepo of _3.Page object) 
@@ -239,7 +246,7 @@ _3.Page.prototype.getDataRepo = function(){
 //return: name of the object (signed with timestamp) of the newly added json
 _3.Page.prototype.addToDataRepo = function (data){
 	var timesign = 'data_' + new Date().getTime().toString();
-	this.helper.el(this.dataRepo).innerText += timesign + '={' + JSON.stringify(data) + '};';
+	this.helper.el(this.dataRepo).innerText += ',' + timesign + ':{' + JSON.stringify(data) + '}';
 	return timesign;
 };
 
