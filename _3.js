@@ -343,20 +343,18 @@ _3.Parser.prototype.bindScript = function (page){
 _3.Parser.prototype.popControls = function (page){
 	var regX = new RegExp("id=[\"'][A-Z a-z 0-9 _-]*[\"']",'g');
 	page.controls.length = 0;
-	while(1){
+	do
+	{
 		match = regX.exec(page.html);
-		if(match == null){
-			break;
-		} 
 		page.controls.push(match[0].split('=')[1]);
-	}
+	}while(match != null);
 	return page;
 };
 
 //method: addHeadFiles (includes the files from Page.files[css/javascript] in the DOM) 
 //params: page (page object)
 //return: boolean(if files have been included)
-_3.Parser.prototype.addHeadFiles = function(page){
+_3.Parser.prototype.addHeadFiles = function(page){ // *** Does not work as it should. Must be fixed ***
 	if(!this.helper.IsNullOrEmpty(page.files)){
 		var files = JSON.parse(page.files);
 		var css = files.css;
@@ -413,7 +411,7 @@ _3.Inject.prototype.script = function (script){
 
 //method: registerStylesheet (registers the stylesheet in the page) 
 //params: cssUrl (url of css file)
-_3.Inject.prototype.registerStylesheet = function (cssUrl){
+_3.Inject.prototype.registerStylesheet = function (cssUrl){ // *** Does not work as it should. Must be fixed ***
 	var link = document.createElement('link');
 	var head = document.getElementsByTagName('head')[0];
 	link.setAttribute('rel', 'stylesheet');
@@ -424,7 +422,7 @@ _3.Inject.prototype.registerStylesheet = function (cssUrl){
 
 //method: registerStylesheet (registers the stylesheet in the page) 
 //params: cssUrl (url of css file)
-_3.Inject.prototype.registerJavascript = function (jsUrl){
+_3.Inject.prototype.registerJavascript = function (jsUrl){ // *** Does not work as it should. Must be fixed ***
 	var script = document.createElement('script');
 	var head = document.getElementsByTagName('head')[0];
 	script.setAttribute('type','text/javascript');
@@ -444,7 +442,7 @@ _3.Helper = function(){
 //method: isScriptIncluded (checks if a certain javascript file is already included) 
 //params: scriptURL (the file to look for)
 //return: boolean whether the file is included or not
-_3.Helper.prototype.isScriptIncluded = function (scriptURL){
+_3.Helper.prototype.isScriptIncluded = function (scriptURL){ // *** Does not work as it should. Must be fixed ***
 	var allScripts = document.getElementsByTagName('script');
 	for (var i = 0; i < allScripts.length; i++) {
 		if(allScripts[i].src == scriptURL){
@@ -457,7 +455,7 @@ _3.Helper.prototype.isScriptIncluded = function (scriptURL){
 //method: isStyleIncluded (checks if a certain stylesheet file is already included) 
 //params: styleURL (the file to look for)
 //return: boolean whether the file is included or not
-_3.Helper.prototype.isStyleIncluded = function (styleURL){
+_3.Helper.prototype.isStyleIncluded = function (styleURL){ // *** Does not work as it should. Must be fixed ***
 	var allStyles = document.getElementsByTagName('link');
 	for (var i = 0; i < allStyles.length; i++) {
 		if(allStyles[i].href == styleURL){
